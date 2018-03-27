@@ -1,8 +1,14 @@
 {
   "kovan": {
+    "provider":"https://kovan.infura.io/",
     "proxyFactory":"0x93ffc328d601c4c5e9cc3c8d257e9afdaf5b0ac0"
   },
   "main": {
+    "provider":"https://mainnet.infura.io",
     "proxyFactory":"0x1043fbd15c10a3234664cbdd944a16a204f945e6"
+  },
+  "private": {
+    "provider":"http://localhost:8545",
+    "proxyFactory":""
   }
 }
