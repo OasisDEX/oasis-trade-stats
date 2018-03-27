@@ -1,8 +1,11 @@
 const debug = require('debug')('runtime');
+const mongoose = require('mongoose');
 const config = require("./config.json");
 const proxyFactoryAbi = require("./abi/dsProxyFactory.json").abi;
 const marketAbi = require("./abi/matchingMarket.json").abi;
 const Web3 = require("web3");
+
+const tradeSchema = require("./schemas/trade");
 
 const PRIVATE_NETWORK = "private";
 
@@ -45,21 +48,72 @@ function isAddressAProxy(address) {
   });
 }
 
-function listen() {
-  console.log("Web3 version:",web3.version.api);
+function connectToDB(URI) {
+  return new Promise((resolve, reject) => {
+    "use strict";
+    mongoose.connect(URI);
+
+    const db = mongoose.connection;
+
+    db.on('error', (error) => {
+      debug(`Cannot connect to db ${error}`);
+      reject()
+    });
+
+    db.once('open', () => {
+      console.log(`Successfully connected to ${URI} \n`);
+      resolve(db);
+    });
+  })
+}
+
+async function listen() {
+  console.log("Web3 version:", web3.version.api);
   console.log("-----------------------------------------------");
   console.log("Network: ", network);
   console.log("Market Address: ", marketAddress);
   console.log("Proxy Factory Address: ", proxyFactoryAddress);
   console.log("-----------------------------------------------");
+
+
+  await connectToDB("mongodb://localhost/oasisDirect");
+  const compiled = mongoose.Schema(tradeSchema);
+  const Trade = mongoose.model('Trade', compiled);
+
+
   console.log("Listening for incoming trades...");
 
-  market.LogTake({}, async (error, trade) => {
-    const taker = trade.args.taker;
-    const isProxy = await isAddressAProxy(taker);
+  market.LogTake({}, async (error, incomingTrade) => {
+    const { args:tradeDetails , transactionHash:txHash, blockNumber} = incomingTrade;
+    const { taker, pay_gem:quote, buy_gem:base, give_amt:paid, take_amt:received  } = tradeDetails;
+    const baseSymbol = networkConfig.tokens[base] || base;
+    const quoteSymbol = networkConfig.tokens[quote] || quote;
 
-    console.log('Address:',taker);
-    console.log('Is Proxy', isProxy);
+    const isProxy = await isAddressAProxy(taker);
+    
+    console.log(isProxy, taker,txHash,blockNumber,paid.valueOf(), received.valueOf(),base,quote,baseSymbol,quoteSymbol);
+
+    const trade = new Trade({
+      isProxy,
+      taker,
+      txHash,
+      blockNumber,
+      paid:paid.valueOf(),
+      received:received.valueOf(),
+      base,
+      quote,
+      baseSymbol,
+      quoteSymbol
+    });
+
+    console.log(`New trade for ${taker}`);
+
+    trade.save((error) => {
+      "use strict";
+      if (error) {
+        debug(`Couldn't save trade for ${taker} with txHash: ${txHash}`);
+      }
+    })
   })
 }
 
