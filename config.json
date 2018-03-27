@@ -1,14 +1,17 @@
 {
   "kovan": {
     "provider":"https://kovan.infura.io/",
+    "market":"0x8cf1cab422a0b6b554077a361f8419cdf122a9f9",
     "proxyFactory":"0x93ffc328d601c4c5e9cc3c8d257e9afdaf5b0ac0"
   },
   "main": {
-    "provider":"https://mainnet.infura.io",
+    "provider":"https://mainnet.infura.io/",
+    "market":"0x14fbca95be7e99c15cc2996c6c9d841e54b79425",
     "proxyFactory":"0x1043fbd15c10a3234664cbdd944a16a204f945e6"
   },
   "private": {
     "provider":"http://localhost:8545",
-    "proxyFactory":""
+    "market":"0x8cf1cab422a0b6b554077a361f8419cdf122a9f9",
+    "proxyFactory":"0x93ffc328d601c4c5e9cc3c8d257e9afdaf5b0ac0"
   }
 }
