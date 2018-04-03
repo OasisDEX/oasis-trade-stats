@@ -4,7 +4,9 @@
   "description": "A tool to monitor how many transaction ( trades ) have been done",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"DEBUG='runtime' NETWORK='main' node index.js",
+    "kovan":"DEBUG='runtime' NETWORK='kovan' node index.js"
   },
   "author": "Georgi Georgie <georgi@makerdao.com>",
   "license": "ISC",

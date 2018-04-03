@@ -71,6 +71,7 @@ async function listen() {
   console.log("Web3 version:", web3.version.api);
   console.log("-----------------------------------------------");
   console.log("Network: ", network);
+  console.log("Server: ", providerAddress);
   console.log("Market Address: ", marketAddress);
   console.log("Proxy Factory Address: ", proxyFactoryAddress);
   console.log("-----------------------------------------------");
