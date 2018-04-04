@@ -25,7 +25,7 @@ module.exports = {
   blockNumber: Number,
   paid: String, //use regex for numbers
   received: String, //use regex for numbers
-  base: {
+  paidToken: {
     type: String,
     validate: {
       validator: (address) => {
@@ -36,7 +36,7 @@ module.exports = {
         "{VALUE} is not a valid ethereum address"
     }
   },
-  quote: {
+  receivedToken: {
     type: String,
     validate: {
       validator: (address) => {
@@ -47,6 +47,7 @@ module.exports = {
         "{VALUE} is not a valid ethereum address"
     }
   },
-  baseSymbol:String,
-  quoteSymbol:String
+  paidTokenSymbol:String,
+  receivedTokenSymbol:String,
+  date:String
 };

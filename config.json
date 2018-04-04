@@ -10,7 +10,7 @@
     }
   },
   "main": {
-    "provider": "https://mainnet.infura.io/",
+    "provider": "http://localhost:8545",
     "market": "0x14fbca95be7e99c15cc2996c6c9d841e54b79425",
     "proxyFactory": "0x1043fbd15c10a3234664cbdd944a16a204f945e6",
     "tokens": {

@@ -81,30 +81,32 @@ async function listen() {
   const compiled = mongoose.Schema(tradeSchema);
   const Trade = mongoose.model('Trade', compiled);
 
+  const logTake =   market.LogTake({},{fromBlock:5172142, toBlock:'latest'});
 
   console.log("Listening for incoming trades...");
 
-  market.LogTake({}, async (error, incomingTrade) => {
+  logTake.watch(async (error, incomingTrade) => {
     const { args:tradeDetails , transactionHash:txHash, blockNumber} = incomingTrade;
-    const { taker, pay_gem:quote, buy_gem:base, give_amt:paid, take_amt:received  } = tradeDetails;
-    const baseSymbol = networkConfig.tokens[base] || base;
-    const quoteSymbol = networkConfig.tokens[quote] || quote;
+    const { taker, pay_gem:receivedToken, buy_gem:paidToken, give_amt:paid, take_amt:received, timestamp  } = tradeDetails;
+    const receivedTokenSymbol = networkConfig.tokens[receivedToken] || receivedToken;
+    const paidTokenSymbol = networkConfig.tokens[paidToken] || paidToken;
 
     const isProxy = await isAddressAProxy(taker);
-    
-    console.log(isProxy, taker,txHash,blockNumber,paid.valueOf(), received.valueOf(),base,quote,baseSymbol,quoteSymbol);
+
+    const date = new Date(timestamp.valueOf()*1000);
 
     const trade = new Trade({
       isProxy,
       taker,
       txHash,
       blockNumber,
-      paid:paid.valueOf(),
-      received:received.valueOf(),
-      base,
-      quote,
-      baseSymbol,
-      quoteSymbol
+      paid:web3.fromWei(paid.valueOf()),
+      received:web3.fromWei(received.valueOf()),
+      paidToken,
+      receivedToken,
+      paidTokenSymbol,
+      receivedTokenSymbol,
+      date: date.toUTCString()
     });
 
     console.log(`New trade for ${taker}`);
@@ -112,10 +114,11 @@ async function listen() {
     trade.save((error) => {
       "use strict";
       if (error) {
-        debug(`Couldn't save trade for ${taker} with txHash: ${txHash}`);
+        debug(`Couldn't save trade for ${taker} with txHash: ${txHash}`, error);
       }
     })
-  })
+  });
+
 }
 
 listen();

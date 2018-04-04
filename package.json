@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"DEBUG='runtime' NETWORK='main' node index.js",
-    "kovan":"DEBUG='runtime' NETWORK='kovan' node index.js"
+    "start": "DEBUG='runtime' NETWORK='main' node index.js",
+    "kovan": "DEBUG='runtime' NETWORK='kovan' node index.js"
   },
   "author": "Georgi Georgie <georgi@makerdao.com>",
   "license": "ISC",
